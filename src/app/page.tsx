@@ -1,11 +1,16 @@
 import Banner from "@/components/Banner/Banner";
-import BestDealer from "@/components/BestDealer/BestDealer";
+import ClientHome from "@/components/Home/ClientHome";
 
-export default function Home() {
+export default async function Home() {
+  const res = await fetch(`http://localhost:5000/api/food`);
+  const data = await res.json();
+
+  const section = await fetch(`http://localhost:5000/api/category`);
+  const sectionData = await section.json();
   return (
     <>
       <Banner></Banner>
-      <BestDealer></BestDealer>
+      <ClientHome foodData={data.data} categoryData={sectionData.data} />
     </>
   );
 }
