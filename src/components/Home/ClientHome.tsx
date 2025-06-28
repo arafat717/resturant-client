@@ -13,6 +13,7 @@ type Props = {
 const ClientHome = ({ foodData, categoryData }: Props) => {
   const [filter, setFilter] = useState<string>("All");
   const [categories, setCategories] = useState<TCategory[]>(categoryData);
+  const [food, setFood] = useState<TFood[]>(foodData);
 
   const refetchCategories = async () => {
     try {
@@ -24,13 +25,24 @@ const ClientHome = ({ foodData, categoryData }: Props) => {
     }
   };
 
+  const refetchFood = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/api/food");
+      const data = await res.json();
+      setFood(data.data);
+    } catch (err) {
+      console.error("Failed to fetch categories:", err);
+    }
+  };
+
   return (
     <BestDealer
-      data={foodData}
+      data={food}
       category={categories}
       filter={filter}
       setFilter={setFilter}
       refetchCategories={refetchCategories}
+      refetchFood={refetchFood}
     />
   );
 };

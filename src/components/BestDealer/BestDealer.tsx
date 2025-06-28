@@ -19,6 +19,7 @@ type Props = {
   filter: string;
   setFilter: (value: string) => void;
   refetchCategories: () => Promise<void>;
+  refetchFood: () => Promise<void>;
 };
 
 const BestDealer = ({
@@ -27,16 +28,20 @@ const BestDealer = ({
   filter,
   setFilter,
   refetchCategories,
+  refetchFood,
 }: Props) => {
+  // for both modal modal/foodmodal
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isFoodModalOpen, setIsFoodModalOpen] = useState(false);
 
+  // category options
   const categoryOptions = category?.map((item) => ({
     value: item.category,
     label: `${item.category}`,
   }));
 
   const [file, setFile] = useState<File | null>(null);
+  // add food handler
   const handleAddFood: SubmitHandler<FieldValues> = async (data) => {
     if (!file) {
       toast.error("Please select an image file.");
@@ -57,15 +62,16 @@ const BestDealer = ({
       );
       await response.json();
       if (response.ok) {
-        await refetchCategories();
+        await refetchFood();
         toast.success("Food added successfully!");
-        setIsModalOpen(false);
+        setIsFoodModalOpen(false);
       }
     } catch (err) {
       toast.error("Failed to add category!");
     }
   };
 
+  // add category handler
   const handleAddCategory: SubmitHandler<FieldValues> = async (data) => {
     try {
       const response = await fetch(
@@ -107,6 +113,7 @@ const BestDealer = ({
       <div className="mt-10 md:mt-12 overflow-x-auto md:px-4">
         <div className="overflow-x-auto">
           <div className="flex  md:justify-between gap-2 md:gap-3 min-w-max px-2 md:px-0">
+            {/* filter button  */}
             <div className="flex gap-1.5">
               <button
                 onClick={() => setFilter("All")}
@@ -131,12 +138,14 @@ const BestDealer = ({
               ))}
             </div>
             <div className="flex gap-2 md:ml-4">
+              {/* add food button */}
               <button
                 onClick={() => setIsFoodModalOpen(true)}
                 className="border px-3 py-1 md:p-2 md:px-4 rounded-full text-xs md:text-lg bg-[#2C2C2C] text-white whitespace-nowrap cursor-pointer"
               >
                 Add Food
               </button>
+              {/* added food modal and form */}
               <FoodModal
                 isOpen={isFoodModalOpen}
                 onClose={() => setIsFoodModalOpen(false)}
@@ -174,12 +183,15 @@ const BestDealer = ({
                   </div>
                 </RForm>
               </FoodModal>
+
+              {/* add category button  */}
               <button
                 onClick={() => setIsModalOpen(true)}
                 className="border px-3 py-1 md:p-2 md:px-4 rounded-full text-xs md:text-lg bg-[#2C2C2C] text-white whitespace-nowrap cursor-pointer "
               >
                 Add Category
               </button>
+              {/* add category modal and form */}
               <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
                 <h2 className="text-xl font-bold mb-4">Add New Category</h2>
                 <RForm onSubmit={handleAddCategory}>
